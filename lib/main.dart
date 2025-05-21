@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'theme/app_theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); //This ensures Flutter is fully initialized before calling any plugins.
   runApp(const ExpenseTrackerApp());
 }
 

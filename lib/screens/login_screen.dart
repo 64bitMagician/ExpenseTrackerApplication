@@ -1,10 +1,11 @@
-import 'dart:io';
+import 'package:expense_tracker/screens/dashboard.dart';
+import 'package:expense_tracker/screens/help_screen.dart'; // Add this import
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-import '../utils/password_validator.dart';
+import 'forgot_password_screen.dart'; // Adjust path as needed
+import '../utils/password_file_management.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -12,92 +13,34 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
-  String? storedPassword;
 
   @override
   void initState() {
     super.initState();
-    _readPassword();
+    PasswordFileManager.loadPassword();
   }
-
-  // This _localPath function is a getter function. It will fetch and return the directory documents directory path of the device
-  // It returns the path as a Future String Object.
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    return directory.path;
-  }
-
-  // This _passwordFile function is a getter function. It will fetch the storage path of the device
-  //and after that, create an empty text file in that directotry.
-  // It returns a Future File Object.
-  Future<File> get _passwordFile async {
-    final path = await _localPath;
-    return File('$path/password.txt');
-  }
-
-  // This function will try to read the password that exists within the device's file system
-  Future<void> _readPassword() async {
-    try {
-      final file = await _passwordFile; // fetches the newly created password file
-      if (await file.exists()) { //it waits to see if the file exists
-        storedPassword = await file.readAsString(); // read the password from the file
-      }
-      // TO DO
-      setState(() {});
-    } catch (e) {
-      print("Error reading password: $e");
-    }
-  }
-
-  Future<void> _writePassword(String password) async {
-    final file = await _passwordFile;
-    await file.writeAsString(password);
-    storedPassword = password;
-    setState(() {});
-  }
-
-  void _handleLogin() {
-    if (_passwordController.text == storedPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Login Successful!'),
-      ));
-      // TODO: Navigate to home screen
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Incorrect Password!'),
-      ));
-    }
-  }
-
-  void _handleSetupPassword() async {
-    final password = _passwordController.text;
-    final validationMessage = PasswordValidator.validate(password);
-
-    if (validationMessage != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(validationMessage),
-        backgroundColor: Colors.redAccent,
-      ));
-      return;
-    }
-
-    await _writePassword(password);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Password Set Successfully!'),
-    ));
-  }
-
 
   @override
   Widget build(BuildContext context) {
-    final isPasswordSet = storedPassword != null;
-
+    bool isPasswordSet = PasswordFileManager.storedPassword != null;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.primary,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            tooltip: 'Help',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HelpScreen()),
+              );
+            },
+          ),
+        ],
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -110,19 +53,56 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: const InputDecoration(
-                  labelText: 'Enter Password',
-                ),
+                decoration: const InputDecoration(labelText: 'Enter Password'),
               ),
               const SizedBox(height: 24),
               ElevatedButton(
-                onPressed: isPasswordSet ? _handleLogin : null,
-                child: const Text('Login'),
+                onPressed: isPasswordSet
+                    ? () {
+                  PasswordFileManager.handleLogin(_passwordController, context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const DashboardScreen()),
+                  );
+                }
+                    : null,
+                child: const Text("Login"),
               ),
               const SizedBox(height: 12),
               ElevatedButton(
-                onPressed: isPasswordSet ? null : _handleSetupPassword,
+                onPressed: isPasswordSet
+                    ? null
+                    : () {
+                  PasswordFileManager.handleSetupPassword(_passwordController, context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const DashboardScreen()),
+                  );
+                },
                 child: const Text('Setup Password'),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  PasswordFileManager.deletePasswordFile(context);
+                  setState(() {
+                    // This forces UI rebuild to update isPasswordSet
+                  });
+                },
+                child: const Text("Delete password.txt"),
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
+                  );
+                },
+                child: const Text(
+                  "Forgot your password?",
+                  style: TextStyle(decoration: TextDecoration.underline),
+                ),
               ),
             ],
           ),
