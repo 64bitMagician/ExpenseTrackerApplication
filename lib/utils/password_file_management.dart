@@ -66,15 +66,17 @@ class PasswordFileManager {
     return file.existsSync() && (await file.readAsString()).trim().isNotEmpty;
   }
 
-  static void handleLogin(TextEditingController controller, BuildContext context) {
+  static bool handleLogin(TextEditingController controller, BuildContext context) {
     if (controller.text == storedPassword) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("✅ Login Successful!")));
+      return true;
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("❌ Incorrect Password!")));
+      return false;
     }
   }
 
-  static Future<void> handleSetupPassword(TextEditingController controller, BuildContext context) async {
+  static Future<bool> handleSetupPassword(TextEditingController controller, BuildContext context) async {
     final password = controller.text;
     final validationMessage = PasswordValidator.validate(password);
 
@@ -82,7 +84,7 @@ class PasswordFileManager {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(validationMessage), backgroundColor: Colors.redAccent),
       );
-      return;
+      return false;
     }
 
     // Ensure the file exists before reading or writing
@@ -95,8 +97,10 @@ class PasswordFileManager {
     if (current.trim().isEmpty) {
       await writeNewPassword(password);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("✅ Password Set Successfully!")));
+      return true;
     } else {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Password already set.")));
+      return false;
     }
   }
 }

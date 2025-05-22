@@ -1,3 +1,4 @@
+import 'package:expense_tracker/appRoutes.dart';
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'theme/app_theme.dart';
@@ -8,7 +9,7 @@ void main() async {
 }
 
 class ExpenseTrackerApp extends StatelessWidget {
-  const ExpenseTrackerApp({Key? key}) : super(key: key);
+  const ExpenseTrackerApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,8 @@ class ExpenseTrackerApp extends StatelessWidget {
       theme: AppTheme.lightTheme, // Light theme
       darkTheme: AppTheme.darkTheme, // Dark theme
       themeMode: ThemeMode.system, // Use system theme preference (light/dark)
-      home: const LoginScreen(),
+      initialRoute: AppRoutes.loginScreen,
+      routes: AppRoutes.routes,
     );
   }
 }

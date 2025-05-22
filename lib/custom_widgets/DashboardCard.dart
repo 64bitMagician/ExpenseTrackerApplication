@@ -4,7 +4,7 @@ class DashboardCard extends StatelessWidget {
   final String title;
   final IconData icon;
 
-  const DashboardCard({required this.title, required this.icon});
+  const DashboardCard({super.key, required this.title, required this.icon});
 
   @override
   Widget build(BuildContext context) {

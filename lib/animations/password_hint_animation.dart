@@ -19,10 +19,10 @@ class PasswordHintAnimation extends StatefulWidget {
   final Duration duration;
 
   const PasswordHintAnimation({
-    Key? key,
+    super.key,
     required this.hintText,
     this.duration = const Duration(milliseconds: 600),
-  }) : super(key: key);
+  });
 
   @override
   State<PasswordHintAnimation> createState() => _PasswordHintAnimationState();

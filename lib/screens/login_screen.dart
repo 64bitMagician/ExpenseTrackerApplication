@@ -1,4 +1,5 @@
-import 'package:expense_tracker/screens/dashboard.dart';
+import 'package:expense_tracker/appRoutes.dart';
+import 'package:expense_tracker/screens/dashboardScreen.dart';
 import 'package:expense_tracker/screens/help_screen.dart'; // Add this import
 import 'package:flutter/material.dart';
 import 'forgot_password_screen.dart'; // Adjust path as needed
@@ -13,6 +14,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
+  bool isPasswordSet = PasswordFileManager.storedPassword != null;
+
 
   @override
   void initState() {
@@ -22,7 +25,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool isPasswordSet = PasswordFileManager.storedPassword != null;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
@@ -34,10 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
             icon: const Icon(Icons.help_outline),
             tooltip: 'Help',
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const HelpScreen()),
-              );
+              Navigator.pushNamed(context, AppRoutes.helpScreen);
             },
           ),
         ],
@@ -50,35 +49,33 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Icon(Icons.lock, size: 64, color: Theme.of(context).colorScheme.primary),
               const SizedBox(height: 24),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(labelText: 'Enter Password'),
-              ),
+              TextField(controller: _passwordController, obscureText: true, decoration: const InputDecoration(labelText: 'Enter Password')),
               const SizedBox(height: 24),
               ElevatedButton(
-                onPressed: isPasswordSet
-                    ? () {
-                  PasswordFileManager.handleLogin(_passwordController, context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const DashboardScreen()),
-                  );
-                }
-                    : null,
+                onPressed:
+                    isPasswordSet
+                        ? () {
+                          final bool validLogin = PasswordFileManager.handleLogin(_passwordController, context);
+                          if(validLogin)
+                            Navigator.pushNamed(context, AppRoutes.dashboardScreen);
+                        }
+                        : null,
                 child: const Text("Login"),
               ),
               const SizedBox(height: 12),
               ElevatedButton(
-                onPressed: isPasswordSet
-                    ? null
-                    : () {
-                  PasswordFileManager.handleSetupPassword(_passwordController, context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const DashboardScreen()),
-                  );
-                },
+                onPressed:
+                    isPasswordSet
+                        ? null
+                        : () async {
+                          final Future<bool> setupValid = PasswordFileManager.handleSetupPassword(_passwordController, context);
+                          if (await setupValid) {
+                            setState(() {
+                              isPasswordSet = true;
+                            });
+                            Navigator.pushNamed(context, AppRoutes.dashboardScreen);
+                          }
+                        },
                 child: const Text('Setup Password'),
               ),
               const SizedBox(height: 16),
@@ -86,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () {
                   PasswordFileManager.deletePasswordFile(context);
                   setState(() {
-                    // This forces UI rebuild to update isPasswordSet
+                    isPasswordSet = false;
                   });
                 },
                 child: const Text("Delete password.txt"),
@@ -94,15 +91,9 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const ForgotPasswordScreen()),
-                  );
+                  Navigator.pushNamed(context, AppRoutes.forgotPasswordScreen);
                 },
-                child: const Text(
-                  "Forgot your password?",
-                  style: TextStyle(decoration: TextDecoration.underline),
-                ),
+                child: const Text("Forgot your password?", style: TextStyle(decoration: TextDecoration.underline)),
               ),
             ],
           ),
