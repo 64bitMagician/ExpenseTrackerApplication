@@ -4,7 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 class PasswordFileManager {
+  //DATA
   static String? storedPassword;
+
+  //Snackbar Utility Method
+  static void snackbarDeleteAndOverrite (context, String message, {Color? color}){
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: color,));
+  }
 
   static Future<String> get getStoragePath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -20,7 +27,7 @@ class PasswordFileManager {
     final file = await getPasswordFile();
     if (!(await file.exists())) { // if file exists
       await file.writeAsString('');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Created password.txt")));
+      snackbarDeleteAndOverrite(context,"Created password.txt");
     }
   }
 
@@ -34,9 +41,9 @@ class PasswordFileManager {
     if (await file.exists()) {
       await file.delete();
       storedPassword = null;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Deleted password.txt")));
+      snackbarDeleteAndOverrite(context,"Deleted password.txt");
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("password.txt does not exist")));
+      snackbarDeleteAndOverrite(context,"password.txt does not exist");
     }
   }
 
@@ -68,10 +75,10 @@ class PasswordFileManager {
 
   static bool handleLogin(TextEditingController controller, BuildContext context) {
     if (controller.text == storedPassword) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("✅ Login Successful!")));
+      snackbarDeleteAndOverrite(context,"✅ Login Successful!");
       return true;
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("❌ Incorrect Password!")));
+      snackbarDeleteAndOverrite(context,"❌ Incorrect Password!");
       return false;
     }
   }
@@ -81,9 +88,7 @@ class PasswordFileManager {
     final validationMessage = PasswordValidator.validate(password);
 
     if (validationMessage != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(validationMessage), backgroundColor: Colors.redAccent),
-      );
+      snackbarDeleteAndOverrite(context, validationMessage,color: Colors.redAccent);
       return false;
     }
 
@@ -96,10 +101,10 @@ class PasswordFileManager {
     final current = await file.readAsString();
     if (current.trim().isEmpty) {
       await writeNewPassword(password);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("✅ Password Set Successfully!")));
+      snackbarDeleteAndOverrite(context, "✅ Password Set Successfully!");
       return true;
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Password already set.")));
+      snackbarDeleteAndOverrite(context, "Password already set.");
       return false;
     }
   }
