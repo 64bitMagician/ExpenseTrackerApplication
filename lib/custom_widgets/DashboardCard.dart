@@ -3,8 +3,14 @@ import 'package:flutter/material.dart';
 class DashboardCard extends StatelessWidget {
   final String title;
   final IconData icon;
+  final VoidCallback? onPressed; // Add this
 
-  const DashboardCard({super.key, required this.title, required this.icon});
+  const DashboardCard({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.onPressed, // optional
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,11 +18,12 @@ class DashboardCard extends StatelessWidget {
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
-        onTap: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('$title tapped!')),
-          );
-        },
+        onTap: onPressed ??
+                () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('$title tapped!')),
+              );
+            },
         borderRadius: BorderRadius.circular(12),
         child: Center(
           child: Column(

@@ -1,6 +1,7 @@
+import 'package:expense_tracker/appRoutes.dart';
 import 'package:flutter/material.dart';
 import '../custom_widgets/DashboardCard.dart';
-import 'help_screen.dart'; // Make sure this file exists or create it
+import 'help_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -41,11 +42,11 @@ class DashboardScreen extends StatelessWidget {
                 crossAxisCount: 2,
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
-                children: const [
-                  DashboardCard(title: 'Expenses', icon: Icons.money_off),
-                  DashboardCard(title: 'Income', icon: Icons.attach_money),
-                  DashboardCard(title: 'Settings', icon: Icons.settings),
-                  DashboardCard(title: 'Savings', icon: Icons.savings),
+                children: [
+                  DashboardCard(title: 'Expenses', icon: Icons.money_off, onPressed: () {Navigator.pushNamed(context, AppRoutes.expensesScreen);},),
+                  DashboardCard(title: 'Income', icon: Icons.attach_money, onPressed: () {Navigator.pushNamed(context, AppRoutes.incomeScreen);},),
+                  DashboardCard(title: 'Settings', icon: Icons.settings, onPressed: () {Navigator.pushNamed(context, AppRoutes.settingsScreen);},),
+                  DashboardCard(title: 'Savings', icon: Icons.savings, onPressed: () {Navigator.pushNamed(context, AppRoutes.savingsScreen);},),
                 ],
               ),
             ),
