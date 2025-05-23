@@ -13,15 +13,29 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+//DATA
   final TextEditingController _passwordController = TextEditingController();
   bool isPasswordSet = PasswordFileManager.storedPassword != null;
+
+  // Load Password Method
+  void _loadPassword() async {
+    await PasswordFileManager.loadPassword();
+    setState(() {});
+    var password = PasswordFileManager.storedPassword;
+    print("Password is: $password");
+    isPasswordSet = PasswordFileManager.storedPassword != null;
+    print("is password set?: $isPasswordSet");
+  }
 
 
   @override
   void initState() {
     super.initState();
-    PasswordFileManager.loadPassword();
+    _loadPassword();
+    print("is password set?: $isPasswordSet");
   }
+
+
 
   @override
   Widget build(BuildContext context) {

@@ -51,7 +51,7 @@ class PasswordFileManager {
     final file = await getPasswordFile();
     if (await file.exists()) {
       storedPassword = await file.readAsString();
-      if (storedPassword != null && storedPassword!.trim().isEmpty) {
+      if (storedPassword != null && storedPassword!.trim().isEmpty) { // in case the password is just blank spaces
         storedPassword = null;
       }
     }
