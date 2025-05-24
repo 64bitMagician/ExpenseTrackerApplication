@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/csv_expense_manager.dart';
-import '../utils/dialogs_expenses.dart';  // <-- Make sure this is correct
+import '../utils/dialogs/dialogs_expenses.dart';  // <-- Make sure this is correct
 import '../custom_widgets/customizable_strings.dart';
 
 class ExpensesScreen extends StatefulWidget {

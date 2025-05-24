@@ -1,4 +1,5 @@
 // appRoutes.dart
+import 'package:expense_tracker/screens/change_password_screen.dart';
 import 'package:expense_tracker/screens/dashboardScreen.dart';
 import 'package:expense_tracker/screens/expenses_screen.dart';
 import 'package:expense_tracker/screens/forgot_password_screen.dart';
@@ -18,6 +19,7 @@ class AppRoutes {
   static const String incomeScreen = '/incomeScreen';
   static const String savingsScreen = '/savingsScreen';
   static const String settingsScreen = '/settingsScreen';
+  static const String changePasswordScreen = '/changePasswordScreen';
 
   static Map<String, WidgetBuilder> get routes => {
     loginScreen: (context) => LoginScreen(),
@@ -29,5 +31,6 @@ class AppRoutes {
     incomeScreen: (context) => IncomeScreen(),
     savingsScreen: (context) => SavingsScreen(),
     settingsScreen: (context) => SettingsScreen(),
+    changePasswordScreen: (context) => ChangePasswordScreen(),
   };
 }

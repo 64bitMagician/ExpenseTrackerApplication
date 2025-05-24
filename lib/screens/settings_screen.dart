@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../dataScreens/getCSVDataBaseWithinStorage.dart'; // Adjust if needed
+import 'change_password_screen.dart';
+import 'package:expense_tracker/appRoutes.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -12,23 +15,28 @@ class SettingsScreen extends StatelessWidget {
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
-        children: const [
+        children: [
           ListTile(
-            leading: Icon(Icons.color_lens),
-            title: Text('Theme'),
-            subtitle: Text('Switch between light and dark mode'),
+            leading: const Icon(Icons.lock),
+            title: const Text('Change Password'),
+            subtitle: const Text('Update your login credentials'),
+            onTap: () {
+              Navigator.pushNamed(context, AppRoutes.changePasswordScreen);
+            },
           ),
-          Divider(),
+          const Divider(),
           ListTile(
-            leading: Icon(Icons.security),
-            title: Text('Privacy & Security'),
-            subtitle: Text('Manage password and data access'),
-          ),
-          Divider(),
-          ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('About'),
-            subtitle: Text('App version and developer info'),
+            leading: const Icon(Icons.table_chart),
+            title: const Text('Show CSV Database'),
+            subtitle: const Text('View raw data stored in the app'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const CsvViewerScreen(),
+                ),
+              );
+            },
           ),
         ],
       ),

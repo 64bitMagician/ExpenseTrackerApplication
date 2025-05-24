@@ -3,15 +3,13 @@ import 'package:expense_tracker/utils/password_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'customSnackbar.dart';
+
 class PasswordFileManager {
   //DATA
   static String? storedPassword;
 
-  //Snackbar Utility Method
-  static void snackbarDeleteAndOverrite (context, String message, {Color? color}){
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message), backgroundColor: color,));
-  }
+
 
   static Future<String> get getStoragePath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -25,9 +23,11 @@ class PasswordFileManager {
 
   static Future<void> createPasswordFile(BuildContext context) async {
     final file = await getPasswordFile();
-    if (!(await file.exists())) { // if file exists
-      await file.writeAsString('');
-      snackbarDeleteAndOverrite(context,"Created password.txt");
+    if (!(await file.exists())) { // if does not file exists
+      {
+        await file.writeAsString('');
+        snackbarDeleteAndOverrite(context,"Created password.txt");
+      }
     }
   }
 
@@ -57,7 +57,7 @@ class PasswordFileManager {
     }
   }
 
-  static Future<void> writeNewPassword(String password) async {
+  static Future<void> writeNewPassword(BuildContext context, String password) async {
     final file = await getPasswordFile();
     final currentContent = await file.readAsString();
     if (currentContent.trim().isEmpty) {
@@ -100,7 +100,7 @@ class PasswordFileManager {
 
     final current = await file.readAsString();
     if (current.trim().isEmpty) {
-      await writeNewPassword(password);
+      await writeNewPassword(context, password);
       snackbarDeleteAndOverrite(context, "✅ Password Set Successfully!");
       return true;
     } else {
