@@ -19,7 +19,7 @@ class ExpenseTrackerApp extends StatelessWidget {
       theme: AppTheme.lightTheme, // Light theme
       darkTheme: AppTheme.darkTheme, // Dark theme
       themeMode: ThemeMode.system, // Use system theme preference (light/dark)
-      initialRoute: AppRoutes.loginScreen,
+      initialRoute: AppRoutes.dashboardScreen,
       routes: AppRoutes.routes,
     );
   }

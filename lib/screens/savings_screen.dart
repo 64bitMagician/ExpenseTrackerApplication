@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../custom_widgets/savings_progress_indicator.dart';
 import '../custom_widgets/savings_buttons.dart';
-import '../utils/dialogs.dart';
+import '../utils/dialogs_savings.dart';
 
 class SavingsScreen extends StatefulWidget {
   const SavingsScreen({super.key});

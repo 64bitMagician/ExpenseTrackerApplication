@@ -12,7 +12,7 @@ class AppTheme {
       useMaterial3: true,
       scaffoldBackgroundColor: const Color(0xFFF0F8F2),
       textTheme: const TextTheme(
-        bodyLarge: TextStyle(color: Colors.black87),
+        bodyLarge: TextStyle(color: Colors.black87, fontSize: 25),
         bodyMedium: TextStyle(color: Colors.black87),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -46,7 +46,7 @@ class AppTheme {
       useMaterial3: true,
       scaffoldBackgroundColor: const Color(0xFF303030), // Dark background
       textTheme: const TextTheme(
-        bodyLarge: TextStyle(color: Colors.white70),
+        bodyLarge: TextStyle(color: Colors.white70, fontSize: 25),
         bodyMedium: TextStyle(color: Colors.white70),
       ),
       inputDecorationTheme: InputDecorationTheme(

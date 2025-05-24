@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/csv_expense_manager.dart';
-import 'add_expense_screen.dart';
+import '../utils/dialogs_expenses.dart';  // <-- Make sure this is correct
+import '../custom_widgets/customizable_strings.dart';
 
 class ExpensesScreen extends StatefulWidget {
   const ExpensesScreen({super.key});
@@ -25,6 +26,25 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     });
   }
 
+  Future<void> _deleteExpense(int index) async {
+    // Show confirmation dialog, wait for user response
+    final confirmed = await showExpenseConfirmDialog(
+      context,
+      "Are you sure you want to delete this expense?",
+    );
+
+    // If user did NOT confirm, just return and do nothing
+    if (!confirmed) return;
+
+    // User confirmed: remove expense and update storage
+    setState(() {
+      _expenses.removeAt(index);
+    });
+
+    await CsvExpenseManager.writeExpenses(_expenses);
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,17 +55,38 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
         itemCount: _expenses.length,
         itemBuilder: (context, index) {
           final e = _expenses[index];
-          return ListTile(
-            title: Text(e['name'] ?? ''),
-            trailing: Text("\$${e['price']}"),
+          final name = e['name'] ?? '';
+          final price = e['price'] ?? '';
+
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  CustomizableString.expenseStrings(context, price, name),
+                  const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () => _deleteExpense(index),
+                  ),
+                ],
+              ),
+            ),
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await Navigator.push(context,
-              MaterialPageRoute(builder: (_) => const AddExpenseScreen()));
-          _loadExpenses(); // Refresh after return
+          final newExpense = await showAddExpenseDialog(context);
+          if (newExpense != null) {
+            await CsvExpenseManager.addExpense(newExpense);
+            _loadExpenses();
+          }
         },
         child: const Icon(Icons.add),
       ),

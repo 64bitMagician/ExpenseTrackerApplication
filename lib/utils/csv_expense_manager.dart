@@ -1,29 +1,38 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:csv/csv.dart';
 
 class CsvExpenseManager {
   static Future<File> _getFile() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final path = '${directory.path}/expenses.csv';
-    return File(path);
-  }
-
-  static Future<void> addExpense(String name, String price) async {
-    final file = await _getFile();
-    final exists = await file.exists();
-    if (!exists) await file.create(recursive: true);
-    await file.writeAsString('$name,$price\n', mode: FileMode.append);
+    final dir = await getApplicationDocumentsDirectory();
+    return File('${dir.path}/expenses.csv');
   }
 
   static Future<List<Map<String, String>>> readExpenses() async {
     final file = await _getFile();
-    final exists = await file.exists();
-    if (!exists) return [];
+    if (!await file.exists()) return [];
 
-    final lines = await file.readAsLines();
-    return lines.map((line) {
-      final parts = line.split(',');
-      return {'name': parts[0], 'price': parts[1]};
+    final contents = await file.readAsString();
+    final rows = const CsvToListConverter().convert(contents);
+
+    return rows.map((row) {
+      return {
+        'price': row[0].toString(),
+        'name': row[1].toString(),
+      };
     }).toList();
+  }
+
+  static Future<void> writeExpenses(List<Map<String, String>> expenses) async {
+    final file = await _getFile();
+    final rows = expenses.map((e) => [e['price'], e['name']]).toList();
+    final csv = const ListToCsvConverter().convert(rows);
+    await file.writeAsString(csv);
+  }
+
+  static Future<void> addExpense(Map<String, String> expense) async {
+    final expenses = await readExpenses();
+    expenses.add(expense);
+    await writeExpenses(expenses);
   }
 }

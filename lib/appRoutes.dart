@@ -1,5 +1,4 @@
 // appRoutes.dart
-import 'package:expense_tracker/screens/add_expense_screen.dart';
 import 'package:expense_tracker/screens/dashboardScreen.dart';
 import 'package:expense_tracker/screens/expenses_screen.dart';
 import 'package:expense_tracker/screens/forgot_password_screen.dart';
@@ -16,7 +15,6 @@ class AppRoutes {
   static const String forgotPasswordScreen = '/forgotPasswordScreen';
   static const String expensesScreen = '/expensesScreen';
   static const String dashboardScreen = '/dashboardScreen';
-  static const String addExpenseScreen = '/addExpenseScreen';
   static const String incomeScreen = '/incomeScreen';
   static const String savingsScreen = '/savingsScreen';
   static const String settingsScreen = '/settingsScreen';
@@ -28,7 +26,6 @@ class AppRoutes {
     forgotPasswordScreen: (context) => ForgotPasswordScreen(),
     expensesScreen: (context) => ExpensesScreen(),
     dashboardScreen: (context) => DashboardScreen(),
-    addExpenseScreen:  (context) => AddExpenseScreen(),
     incomeScreen: (context) => IncomeScreen(),
     savingsScreen: (context) => SavingsScreen(),
     settingsScreen: (context) => SettingsScreen(),
