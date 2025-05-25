@@ -3,16 +3,22 @@ import 'package:flutter/material.dart';
 import '../custom_widgets/DashboardCard.dart';
 import 'help_screen.dart';
 
-class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
+class DashboardScreen extends StatefulWidget {
+  static double balance = 200;
+
+  DashboardScreen({super.key});
+
+  static void extractFromBalance(double money) {
+    balance -= money;
+  }
 
   @override
-  Widget build(BuildContext context) {
-    // Dummy data for balance display
-    final double _income = 1000.0;
-    final double _expenses = 400.0;
-    final double _balance = _income - _expenses;
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
 
+class _DashboardScreenState extends State<DashboardScreen> {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Dashboard'),
@@ -40,10 +46,13 @@ class DashboardScreen extends StatelessWidget {
               width: double.infinity,
               child: Card(
                 elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 color: Theme.of(context).colorScheme.secondaryContainer,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -53,7 +62,7 @@ class DashboardScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        '\$${_balance.toStringAsFixed(2)}',
+                        '\$${DashboardScreen.balance.toStringAsFixed(2)}',
                         style: const TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
@@ -76,28 +85,32 @@ class DashboardScreen extends StatelessWidget {
                     title: 'Expenses',
                     icon: Icons.money_off,
                     onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.expensesScreen);
+                      Navigator.pushNamed(context, AppRoutes.expensesScreen)
+                          .then((_) => setState(() {})); // Rebuild when returning
                     },
                   ),
                   DashboardCard(
                     title: 'Income',
                     icon: Icons.attach_money,
                     onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.incomeScreen);
+                      Navigator.pushNamed(context, AppRoutes.incomeScreen)
+                          .then((_) => setState(() {}));
                     },
                   ),
                   DashboardCard(
                     title: 'Settings',
                     icon: Icons.settings,
                     onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.settingsScreen);
+                      Navigator.pushNamed(context, AppRoutes.settingsScreen)
+                          .then((_) => setState(() {}));
                     },
                   ),
                   DashboardCard(
                     title: 'Savings',
                     icon: Icons.savings,
                     onPressed: () {
-                      Navigator.pushNamed(context, AppRoutes.savingsScreen);
+                      Navigator.pushNamed(context, AppRoutes.savingsScreen)
+                          .then((_) => setState(() {}));
                     },
                   ),
                 ],

@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:expense_tracker/screens/dashboardScreen.dart';
 import 'package:flutter/material.dart';
 import '../utils/csv_expense_manager.dart';
 import '../utils/dialogs/dialogs_expenses.dart';  // <-- Make sure this is correct
@@ -44,6 +47,32 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
     await CsvExpenseManager.writeExpenses(_expenses);
   }
 
+  String extractMoneyFromString(String expenseString){
+    int i = expenseString.length-2;
+    String extractedMoney="";
+    while(expenseString[i]!=" ") // while inverse indexing is different from the ' ' character
+          i--;
+    i++; // stat indexing from number
+    //The index is now on the " " character before the number
+    while(expenseString[i]!="}") // traversing the money number
+    {
+      extractedMoney+=expenseString[i];
+      i++;
+    }
+
+    return extractedMoney;
+  }
+
+  void withdrawCurrentBalance(Map<String, String> theExpense){
+    String CSVline = theExpense.toString();
+    String money = extractMoneyFromString(CSVline);
+    // extracted money from CSV String
+    //turn money String into double
+    double formatedMoney = double.parse(money);
+    // Now extract from Current Balance in Dashboard
+    DashboardScreen.extractFromBalance(formatedMoney);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +115,8 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
           if (newExpense != null) {
             await CsvExpenseManager.addExpense(newExpense);
             _loadExpenses();
+            //Withdraw from Current Balance
+            withdrawCurrentBalance(newExpense);
           }
         },
         child: const Icon(Icons.add),
