@@ -11,7 +11,7 @@ import 'package:expense_tracker/screens/settings_screen.dart';
 import 'package:flutter/material.dart';
 
 class AppRoutes {
-  static const String loginScreen = '/';
+  static const String loginScreen = '/loginScreen';
   static const String helpScreen = '/helpScreen';
   static const String forgotPasswordScreen = '/forgotPasswordScreen';
   static const String expensesScreen = '/expensesScreen';

@@ -1,25 +1,35 @@
-import 'package:expense_tracker/appRoutes.dart';
+import 'package:expense_tracker/screens/dashboardScreen.dart';
+import 'package:expense_tracker/screens/login_screen.dart';
+import 'package:expense_tracker/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart';
-import 'theme/app_theme.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'appRoutes.dart';
+import 'onboardingScreen.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); //This ensures Flutter is fully initialized before calling any plugins.
-  runApp(const ExpenseTrackerApp());
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final prefs = await SharedPreferences.getInstance();
+  final onboardingDone = prefs.getBool('onboardingDone') ?? false;
+
+  runApp(ExpenseTrackerApp(onboardingDone: onboardingDone));
 }
 
 class ExpenseTrackerApp extends StatelessWidget {
-  const ExpenseTrackerApp({super.key});
+  final bool onboardingDone;
+  const ExpenseTrackerApp({super.key, required this.onboardingDone});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Expense Tracker',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme, // Light theme
-      darkTheme: AppTheme.darkTheme, // Dark theme
-      themeMode: ThemeMode.system, // Use system theme preference (light/dark)
-      initialRoute: AppRoutes.dashboardScreen,
+      theme: AppTheme.lightTheme, // your theme
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      // If onboardingDone is true, start at dashboard, else show onboarding first
+      home: onboardingDone ? const LoginScreen() : OnboardingScreen(),
       routes: AppRoutes.routes,
     );
   }

@@ -5,22 +5,23 @@ import 'package:flutter/material.dart';
 
 //Methods
 //Methods
-String hintResponse(){
-  if(PasswordFileManager.storedPassword==null)
+String hintResponse(String? outputText){
+  if(outputText==null)
   {
     return "Password not set up";
   }
-  return PasswordFileManager.storedPassword!;
+  return outputText;
 }
 
 
 class PasswordHintAnimation extends StatefulWidget {
-  final String hintText;
   final Duration duration;
+  String? outputText;
 
-  const PasswordHintAnimation({
+  PasswordHintAnimation(
+   this.outputText,
+      {
     super.key,
-    required this.hintText,
     this.duration = const Duration(milliseconds: 600),
   });
 
@@ -74,7 +75,7 @@ class _PasswordHintAnimationState extends State<PasswordHintAnimation>
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
-            hintResponse(),
+            hintResponse(widget.outputText),
             style: const TextStyle(fontSize: 18, color: Colors.black87),
           ),
         ),

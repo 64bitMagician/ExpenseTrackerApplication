@@ -1,4 +1,6 @@
+import 'package:expense_tracker/utils/password_file_management.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../animations/password_hint_animation.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -11,16 +13,28 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     with SingleTickerProviderStateMixin {
   final TextEditingController _answerController = TextEditingController();
-  final String _correctAnswer = "YOUR_ANSWER";
+  late final String _correctAnswer;
 
   bool _showPasswordMessage = false;
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _fadeAnimation;
 
+  Future<void> fetchCorrectResponse() async {
+    final prefs = await SharedPreferences.getInstance();
+    _correctAnswer = prefs.getString('firstDogName')!;
+  }
+
+  String? fetchPassword(){
+    String? password = PasswordFileManager.storedPassword;
+    return password;
+  }
+
   @override
   void initState() {
     super.initState();
+    fetchPassword();
+    fetchCorrectResponse();
 
     _animationController = AnimationController(
       vsync: this,
@@ -100,7 +114,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 position: _slideAnimation,
                 child: FadeTransition(
                   opacity: _fadeAnimation,
-                  child: const PasswordHintAnimation(hintText: ""),
+                  child: PasswordHintAnimation(fetchPassword()),
                 ),
               ),
           ],
