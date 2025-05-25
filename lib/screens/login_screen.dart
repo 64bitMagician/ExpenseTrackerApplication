@@ -93,16 +93,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: const Text('Setup Password'),
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  PasswordFileManager.deletePasswordFile(context);
-                  setState(() {
-                    isPasswordSet = false;
-                  });
-                },
-                child: const Text("Delete password.txt"),
-              ),
-              const SizedBox(height: 16),
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, AppRoutes.forgotPasswordScreen);

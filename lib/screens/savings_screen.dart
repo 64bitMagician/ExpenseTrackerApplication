@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../custom_widgets/savings_progress_indicator.dart';
 import '../custom_widgets/savings_buttons.dart';
 import '../utils/dialogs/dialogs_savings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class SavingsScreen extends StatefulWidget {
   const SavingsScreen({super.key});
@@ -13,6 +15,26 @@ class SavingsScreen extends StatefulWidget {
 class _SavingsScreenState extends State<SavingsScreen> {
   double _savings = 0;
   double _goal = 0;
+
+  Future<void> _saveToPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('savings', _savings);
+    await prefs.setDouble('goal', _goal);
+  }
+
+  Future<void> _loadFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _savings = prefs.getDouble('savings') ?? 0.0;
+      _goal = prefs.getDouble('goal') ?? 0.0;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFromPrefs();
+  }
 
   void _addToSavings() async {
     final amountStr = await showInputDialog(context, 'Add to Savings');
@@ -49,6 +71,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
 
     setState(() {
       _savings = newTotal;
+      _saveToPrefs();
     });
   }
 
@@ -67,10 +90,12 @@ class _SavingsScreenState extends State<SavingsScreen> {
         setState(() {
           _goal = newGoal;
           _savings = newGoal;
+          _saveToPrefs();
         });
       } else {
         setState(() {
           _goal = newGoal;
+          _saveToPrefs();
         });
       }
     }
@@ -80,6 +105,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
     setState(() {
       _goal = 0;
       _savings = 0;
+      _saveToPrefs();
     });
   }
 
