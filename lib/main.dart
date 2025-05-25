@@ -1,5 +1,6 @@
 import 'package:expense_tracker/screens/dashboardScreen.dart';
 import 'package:expense_tracker/screens/login_screen.dart';
+import 'package:expense_tracker/screens/splash_screen.dart';
 import 'package:expense_tracker/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,7 +30,7 @@ class ExpenseTrackerApp extends StatelessWidget {
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
       // If onboardingDone is true, start at dashboard, else show onboarding first
-      home: onboardingDone ? const LoginScreen() : OnboardingScreen(),
+      home: onboardingDone ? const SplashScreen() : OnboardingScreen(),
       routes: AppRoutes.routes,
     );
   }

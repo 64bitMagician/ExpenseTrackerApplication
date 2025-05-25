@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../dataScreens/getCSVDataBaseWithinStorage.dart'; // Adjust if needed
-import 'change_password_screen.dart';
+import '../dataScreens/getExpensesCSVDataBaseWithinStorage.dart';
+import '../dataScreens/getIncomesCSVDataBaseWithinStorage.dart'; // Add this line
 import 'package:expense_tracker/appRoutes.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -27,13 +27,26 @@ class SettingsScreen extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.table_chart),
-            title: const Text('Show CSV Database'),
-            subtitle: const Text('View raw data stored in the app'),
+            title: const Text('Show Expenses CSV Database'),
+            subtitle: const Text('View raw expenses stored in the app'),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => const CsvViewerScreen(),
+                ),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.table_chart),
+            title: const Text('Show Incomes CSV Database'),
+            subtitle: const Text('View raw incomes stored in the app'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const CsvViewerIncomeScreen(),
                 ),
               );
             },
