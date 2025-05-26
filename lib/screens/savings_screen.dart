@@ -1,3 +1,4 @@
+import 'package:expense_tracker/screens/dashboardScreen.dart';
 import 'package:flutter/material.dart';
 import '../custom_widgets/savings_progress_indicator.dart';
 import '../custom_widgets/savings_buttons.dart';
@@ -69,6 +70,10 @@ class _SavingsScreenState extends State<SavingsScreen> {
       return;
     }
 
+    // If reached here, then the adding of funds is valid
+    // We want to witdraw from current balance
+    DashboardScreen.extractFromBalance(amount);
+
     setState(() {
       _savings = newTotal;
       _saveToPrefs();
@@ -89,7 +94,7 @@ class _SavingsScreenState extends State<SavingsScreen> {
         if (!confirmed) return;
         setState(() {
           _goal = newGoal;
-          _savings = newGoal;
+          _savings = 0;
           _saveToPrefs();
         });
       } else {
