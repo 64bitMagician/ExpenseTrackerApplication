@@ -3,6 +3,7 @@ import '../utils/csv_income_manager.dart';
 import '../utils/dialogs/dialogs_incomes.dart';
 import '../custom_widgets/customizable_strings.dart';
 import '../utils/dialogs/dialogs_incomes.dart';
+import 'dashboardScreen.dart';
 
 class IncomeScreen extends StatefulWidget {
   const IncomeScreen({super.key});
@@ -13,6 +14,7 @@ class IncomeScreen extends StatefulWidget {
 
 class _IncomeScreenState extends State<IncomeScreen> {
   List<Map<String, String>> _incomes = [];
+
 
   @override
   void initState() {
@@ -40,6 +42,32 @@ class _IncomeScreenState extends State<IncomeScreen> {
     });
 
     await CsvIncomeManager.writeIncomes(_incomes);
+  }
+
+  String extractMoneyFromString(String incomeString){
+    int i = incomeString.length-2;
+    String extractedMoney="";
+    while(incomeString[i]!=" ") // while inverse indexing is different from the ' ' character
+      i--;
+    i++; // stat indexing from number
+    //The index is now on the " " character before the number
+    while(incomeString[i]!="}") // traversing the money number
+        {
+      extractedMoney+=incomeString[i];
+      i++;
+    }
+
+    return extractedMoney;
+  }
+
+  void addToCurrentBalance(Map<String, String> theExpense){
+    String CSVline = theExpense.toString();
+    String money = extractMoneyFromString(CSVline);
+    // extracted money from CSV String
+    //turn money String into double
+    double formatedMoney = double.parse(money);
+    // Now extract from Current Balance in Dashboard
+    DashboardScreen.addToBalance(formatedMoney);
   }
 
   @override
@@ -82,7 +110,12 @@ class _IncomeScreenState extends State<IncomeScreen> {
           final newIncome = await showAddIncomeDialog(context);
           if (newIncome != null) {
             await CsvIncomeManager.addIncome(newIncome);
+            //Refreshes the screen with the new income
             _loadIncomes();
+            // Add income to Current Balance
+            //-------------------------------------
+            addToCurrentBalance(newIncome);
+            //--------------------------------------
           }
         },
         child: const Icon(Icons.add),

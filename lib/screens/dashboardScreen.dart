@@ -2,6 +2,7 @@ import 'package:expense_tracker/appRoutes.dart';
 import 'package:flutter/material.dart';
 import '../custom_widgets/DashboardCard.dart';
 import 'help_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardScreen extends StatefulWidget {
   static double balance = 200;
@@ -10,6 +11,10 @@ class DashboardScreen extends StatefulWidget {
 
   static void extractFromBalance(double money) {
     balance -= money;
+  }
+
+  static void addToBalance(double money){
+    balance += money;
   }
 
   @override
