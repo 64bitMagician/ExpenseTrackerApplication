@@ -13,6 +13,10 @@ void main() async {
 
   final prefs = await SharedPreferences.getInstance();
   final onboardingDone = prefs.getBool('onboardingDone') ?? false;
+  // Initialize Current Balance. It shall be 0 only the first time you run the app.
+  // After that the state shall be preserved.
+  if(prefs.getDouble("currentBalanceDoubleType")==null)
+    prefs.setDouble("currentBalanceDoubleType", 0);
 
   runApp(ExpenseTrackerApp(onboardingDone: onboardingDone));
 }

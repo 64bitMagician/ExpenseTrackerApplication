@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen>
     _navigationTimer = Timer(const Duration(seconds: 5), ()
     {
       _controller.stop();
-      Navigator.of(context).pushReplacementNamed("/dashboardScreen");
+      Navigator.of(context).pushReplacementNamed("/loginScreen");
     });
   }
 
