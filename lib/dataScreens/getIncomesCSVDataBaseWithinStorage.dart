@@ -28,7 +28,7 @@ class _CsvViewerIncomeScreenState extends State<CsvViewerIncomeScreen> {
   Widget build(BuildContext context) {
     if (_data.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Income CSV Viewer')),
+        appBar: AppBar(title: const Text('CSV Incomes Database')),
         body: const Center(child: Text('No income data found')),
       );
     }
@@ -36,7 +36,7 @@ class _CsvViewerIncomeScreenState extends State<CsvViewerIncomeScreen> {
     final columns = _data.first.keys.toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Income CSV Viewer')),
+      appBar: AppBar(title: const Text('CSV Incomes Database')),
       body: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(

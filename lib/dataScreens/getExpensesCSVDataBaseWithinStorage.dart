@@ -28,7 +28,7 @@ class _CsvViewerScreenState extends State<CsvViewerScreen> {
   Widget build(BuildContext context) {
     if (_data.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: Text('CSV Database')),
+        appBar: AppBar(title: Text('CSV Expenses Database')),
         body: Center(child: Text('No data found')),
       );
     }
@@ -36,7 +36,7 @@ class _CsvViewerScreenState extends State<CsvViewerScreen> {
     final columns = _data.first.keys.toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('CSV Database')),
+      appBar: AppBar(title: const Text('CSV Expenses Database')),
       body: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(
