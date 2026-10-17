@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
 import '../custom_widgets/faq_card.dart';
 
-class HelpScreen extends StatefulWidget {
+class HelpScreen extends StatelessWidget {
   const HelpScreen({super.key});
 
-  @override
-  State<HelpScreen> createState() => _HelpScreenState();
-}
-
-class _HelpScreenState extends State<HelpScreen> {
-  late VideoPlayerController _controller;
-
-  final List<Map<String, String>> faqData = [
+  static const List<Map<String, String>> faqData = [
     {
       'question': 'How do I add an expense?',
       'answer': 'Navigate from Dashboard screen to Expenses Screen. In the bottom right corner there is a floating button with a plus icon. Press on it. A pop up will be shown, asking you to add an expense. Add the expense name and price as the pop up suggests and click on "ok".'
@@ -44,131 +36,6 @@ class _HelpScreenState extends State<HelpScreen> {
   ];
 
   @override
-  void initState() {
-    super.initState();
-    _controller = VideoPlayerController.asset('assets/videos/tutorial.mp4')
-      ..addListener(_onVideoChanged)
-      ..initialize().then((_) {
-        if (mounted) setState(() {});
-      }, onError: (_) {
-        if (mounted) setState(() {}); // shows the error message instead of the spinner
-      });
-  }
-
-  // Rebuild only when the play overlay needs to change, e.g. when the video ends
-  bool _wasPlaying = false;
-  void _onVideoChanged() {
-    final isPlaying = _controller.value.isPlaying;
-    if (isPlaying != _wasPlaying && mounted) {
-      setState(() => _wasPlaying = isPlaying);
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.removeListener(_onVideoChanged);
-    _controller.dispose();
-    super.dispose();
-  }
-
-  Widget buildVideoSection() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            AspectRatio(
-              aspectRatio: _controller.value.aspectRatio,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  VideoPlayer(_controller),
-                  if (!_controller.value.isPlaying)
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _controller.play();
-                        });
-                      },
-                      child: Container(
-                        color: Colors.black45,
-                        child: const Icon(Icons.play_circle_fill, size: 64, color: Colors.white),
-                      ),
-                    ),
-                  if (_controller.value.isPlaying)
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _controller.pause();
-                        });
-                      },
-                      child: Container(
-                        color: Colors.transparent,
-                      ),
-                    ),
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: VideoProgressIndicator(_controller, allowScrubbing: true),
-                  ),
-                ],
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.all(12.0),
-              child: Text(
-                'Watch this short tutorial to understand how the app works.',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget buildFAQSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-          child: Row(
-            children: [
-              Icon(Icons.question_answer),
-              SizedBox(width: 8),
-              Text(
-                'Frequently Asked Questions',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
-        const Divider(
-          color: Colors.grey,
-          thickness: 1,
-          indent: 16,
-          endIndent: 16,
-        ),
-        const SizedBox(height: 4),
-        ...faqData.map((item) => FAQCard(
-          question: item['question']!,
-          answer: item['answer']!,
-        )),
-        const SizedBox(height: 32),
-      ],
-    );
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -177,24 +44,34 @@ class _HelpScreenState extends State<HelpScreen> {
         foregroundColor: Theme.of(context).colorScheme.onPrimary,
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              if (_controller.value.isInitialized)
-                buildVideoSection()
-              else if (_controller.value.hasError)
-                const Padding(
-                  padding: EdgeInsets.all(32.0),
-                  child: Text('The tutorial video could not be loaded.'),
-                )
-              else
-                const Padding(
-                  padding: EdgeInsets.all(32.0),
-                  child: CircularProgressIndicator(),
-                ),
-              buildFAQSection(),
-            ],
-          ),
+        child: ListView(
+          padding: const EdgeInsets.only(top: 8, bottom: 32),
+          children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+              child: Row(
+                children: [
+                  Icon(Icons.question_answer),
+                  SizedBox(width: 8),
+                  Text(
+                    'Frequently Asked Questions',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(
+              color: Colors.grey,
+              thickness: 1,
+              indent: 16,
+              endIndent: 16,
+            ),
+            const SizedBox(height: 4),
+            ...faqData.map((item) => FAQCard(
+              question: item['question']!,
+              answer: item['answer']!,
+            )),
+          ],
         ),
       ),
     );
