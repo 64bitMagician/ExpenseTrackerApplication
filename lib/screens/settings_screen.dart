@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../dataScreens/getExpensesCSVDataBaseWithinStorage.dart';
-import '../dataScreens/getIncomesCSVDataBaseWithinStorage.dart'; // Add this line
-import 'package:expense_tracker/appRoutes.dart';
+import '../data_screens/expenses_csv_viewer_screen.dart';
+import '../data_screens/incomes_csv_viewer_screen.dart';
+import 'package:expense_tracker/app_routes.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});

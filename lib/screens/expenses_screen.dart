@@ -1,9 +1,6 @@
-import 'dart:ffi';
-
-import 'package:expense_tracker/screens/dashboardScreen.dart';
 import 'package:flutter/material.dart';
 import '../utils/csv_expense_manager.dart';
-import '../utils/dialogs/dialogs_expenses.dart';  // <-- Make sure this is correct
+import '../utils/dialogs/dialogs.dart';
 import '../custom_widgets/customizable_strings.dart';
 
 class ExpensesScreen extends StatefulWidget {
@@ -24,14 +21,29 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
 
   Future<void> _loadExpenses() async {
     final data = await CsvExpenseManager.readExpenses();
+    if (!mounted) return;
     setState(() {
       _expenses = data;
     });
   }
 
+  Future<void> _addExpense() async {
+    final entry = await showNameAmountDialog(
+      context,
+      title: 'Add Expense',
+      nameLabel: 'Expense Name',
+      amountLabel: 'Price',
+    );
+    if (entry == null) return;
+
+    // The dashboard recalculates the balance from the stored expenses, so saving is enough
+    await CsvExpenseManager.addExpense({'name': entry.name, 'price': entry.amount.toString()});
+    await _loadExpenses();
+  }
+
   Future<void> _deleteExpense(int index) async {
     // Show confirmation dialog, wait for user response
-    final confirmed = await showExpenseConfirmDialog(
+    final confirmed = await showConfirmDialog(
       context,
       "Are you sure you want to delete this expense?",
     );
@@ -46,33 +58,6 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
 
     await CsvExpenseManager.writeExpenses(_expenses);
   }
-
-  String extractMoneyFromString(String expenseString){
-    int i = expenseString.length-2;
-    String extractedMoney="";
-    while(expenseString[i]!=" ") // while inverse indexing is different from the ' ' character
-          i--;
-    i++; // stat indexing from number
-    //The index is now on the " " character before the number
-    while(expenseString[i]!="}") // traversing the money number
-    {
-      extractedMoney+=expenseString[i];
-      i++;
-    }
-
-    return extractedMoney;
-  }
-
-  void withdrawCurrentBalance(Map<String, String> theExpense){
-    String CSVline = theExpense.toString();
-    String money = extractMoneyFromString(CSVline);
-    // extracted money from CSV String
-    //turn money String into double
-    double formatedMoney = double.parse(money);
-    // Now extract from Current Balance in Dashboard
-    DashboardScreen.extractFromBalance(formatedMoney);
-  }
-
 
   @override
   Widget build(BuildContext context) {
@@ -97,10 +82,11 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  CustomizableString.expenseStrings(context, price, name),
-                  const Spacer(),
+                  // Expanded lets long names wrap instead of overflowing the row
+                  Expanded(child: CustomizableString.entryText(context, price, name)),
                   IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
+                    tooltip: 'Delete',
                     onPressed: () => _deleteExpense(index),
                   ),
                 ],
@@ -110,15 +96,8 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final newExpense = await showAddExpenseDialog(context);
-          if (newExpense != null) {
-            await CsvExpenseManager.addExpense(newExpense);
-            _loadExpenses();
-            //Withdraw from Current Balance
-            withdrawCurrentBalance(newExpense);
-          }
-        },
+        onPressed: _addExpense,
+        tooltip: 'Add Expense',
         child: const Icon(Icons.add),
       ),
     );

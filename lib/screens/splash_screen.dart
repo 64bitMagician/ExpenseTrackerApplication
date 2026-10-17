@@ -1,3 +1,4 @@
+import 'package:expense_tracker/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -20,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen>
     _navigationTimer = Timer(const Duration(seconds: 5), ()
     {
       _controller.stop();
-      Navigator.of(context).pushReplacementNamed("/loginScreen");
+      Navigator.of(context).pushReplacementNamed(AppRoutes.loginScreen);
     });
   }
 

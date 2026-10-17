@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../utils/csv_income_manager.dart';
+import '../utils/csv_expense_manager.dart';
 
-class CsvViewerIncomeScreen extends StatefulWidget {
-  const CsvViewerIncomeScreen({super.key});
+class CsvViewerScreen extends StatefulWidget {
+  const CsvViewerScreen({super.key});
 
   @override
-  State<CsvViewerIncomeScreen> createState() => _CsvViewerIncomeScreenState();
+  State<CsvViewerScreen> createState() => _CsvViewerScreenState();
 }
 
-class _CsvViewerIncomeScreenState extends State<CsvViewerIncomeScreen> {
+class _CsvViewerScreenState extends State<CsvViewerScreen> {
   List<Map<String, String>> _data = [];
 
   @override
@@ -18,7 +18,8 @@ class _CsvViewerIncomeScreenState extends State<CsvViewerIncomeScreen> {
   }
 
   Future<void> _loadCsv() async {
-    final data = await CsvIncomeManager.readIncomes();
+    final data = await CsvExpenseManager.readExpenses();
+    if (!mounted) return;
     setState(() {
       _data = data;
     });
@@ -28,15 +29,15 @@ class _CsvViewerIncomeScreenState extends State<CsvViewerIncomeScreen> {
   Widget build(BuildContext context) {
     if (_data.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text('CSV Incomes Database')),
-        body: const Center(child: Text('No income data found')),
+        appBar: AppBar(title: const Text('CSV Expenses Database')),
+        body: const Center(child: Text('No data found')),
       );
     }
 
     final columns = _data.first.keys.toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('CSV Incomes Database')),
+      appBar: AppBar(title: const Text('CSV Expenses Database')),
       body: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(
@@ -55,3 +56,4 @@ class _CsvViewerIncomeScreenState extends State<CsvViewerIncomeScreen> {
     );
   }
 }
+

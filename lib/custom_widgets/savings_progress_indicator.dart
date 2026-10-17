@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
+import '../utils/money.dart';
 
 class SavingsProgress extends StatefulWidget {
   final double savings;
@@ -103,9 +104,24 @@ class _SavingsProgressState extends State<SavingsProgress>
                   color: Colors.green,
                 ),
               ),
-              Text(
-                '${widget.savings.toStringAsFixed(2)} / ${widget.goal.toStringAsFixed(2)}',
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              // Scaled down if needed so large amounts stay inside the circle
+              SizedBox(
+                width: 150,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Column(
+                    children: [
+                      Text(
+                        formatMoney(widget.savings),
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        'of ${formatMoney(widget.goal)}',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

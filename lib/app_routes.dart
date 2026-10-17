@@ -1,6 +1,6 @@
-// appRoutes.dart
+// app_routes.dart
 import 'package:expense_tracker/screens/change_password_screen.dart';
-import 'package:expense_tracker/screens/dashboardScreen.dart';
+import 'package:expense_tracker/screens/dashboard_screen.dart';
 import 'package:expense_tracker/screens/expenses_screen.dart';
 import 'package:expense_tracker/screens/forgot_password_screen.dart';
 import 'package:expense_tracker/screens/help_screen.dart';
@@ -22,15 +22,14 @@ class AppRoutes {
   static const String changePasswordScreen = '/changePasswordScreen';
 
   static Map<String, WidgetBuilder> get routes => {
-    loginScreen: (context) => LoginScreen(),
-    helpScreen: (context) => HelpScreen(),
-    //settingsScreen: (context) => SettingsScreen(),
-    forgotPasswordScreen: (context) => ForgotPasswordScreen(),
-    expensesScreen: (context) => ExpensesScreen(),
-    dashboardScreen: (context) => DashboardScreen(),
-    incomeScreen: (context) => IncomeScreen(),
-    savingsScreen: (context) => SavingsScreen(),
-    settingsScreen: (context) => SettingsScreen(),
-    changePasswordScreen: (context) => ChangePasswordScreen(),
+    loginScreen: (context) => const LoginScreen(),
+    helpScreen: (context) => const HelpScreen(),
+    forgotPasswordScreen: (context) => const ForgotPasswordScreen(),
+    expensesScreen: (context) => const ExpensesScreen(),
+    dashboardScreen: (context) => const DashboardScreen(),
+    incomeScreen: (context) => const IncomeScreen(),
+    savingsScreen: (context) => const SavingsScreen(),
+    settingsScreen: (context) => const SettingsScreen(),
+    changePasswordScreen: (context) => const ChangePasswordScreen(),
   };
 }

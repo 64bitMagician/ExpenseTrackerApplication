@@ -1,23 +1,21 @@
-import 'dart:io';
-import 'package:path_provider/path_provider.dart';
 import 'package:csv/csv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+/// Incomes are kept as CSV text in SharedPreferences, which works on mobile,
+/// desktop and web (where it is backed by the browser's localStorage).
 class CsvIncomeManager {
-  static const String _fileName = "incomes.csv";
-
-  static Future<File> _getFile() async {
-    final dir = await getApplicationDocumentsDirectory();
-    return File("${dir.path}/$_fileName");
-  }
+  static const String prefsKey = 'incomes_csv';
 
   static Future<List<Map<String, String>>> readIncomes() async {
-    final file = await _getFile();
-    if (!await file.exists()) return [];
+    final prefs = await SharedPreferences.getInstance();
+    final content = prefs.getString(prefsKey);
+    if (content == null) return [];
 
-    final content = await file.readAsString();
-    final rows = const CsvToListConverter().convert(content);
+    // Keep every field as text, otherwise a name like "007" would be read back as "7".
+    final rows = const CsvToListConverter(shouldParseNumbers: false).convert(content);
 
     return rows
+        .where((row) => row.length >= 2)
         .map((row) => {
       'name': row[0].toString(),
       'amount': row[1].toString(),
@@ -26,10 +24,10 @@ class CsvIncomeManager {
   }
 
   static Future<void> writeIncomes(List<Map<String, String>> incomes) async {
-    final file = await _getFile();
     final rows = incomes.map((e) => [e['name'], e['amount']]).toList();
     final csv = const ListToCsvConverter().convert(rows);
-    await file.writeAsString(csv);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(prefsKey, csv);
   }
 
   static Future<void> addIncome(Map<String, String> income) async {

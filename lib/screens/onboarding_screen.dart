@@ -1,10 +1,10 @@
-import 'package:expense_tracker/appRoutes.dart';
+import 'package:expense_tracker/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingScreen extends StatefulWidget {
 
-  const OnboardingScreen({Key? key}) : super(key: key);
+  const OnboardingScreen({super.key});
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -14,12 +14,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _dogNameController = TextEditingController();
 
+  @override
+  void dispose() {
+    _dogNameController.dispose();
+    super.dispose();
+  }
+
   Future<void> _saveAnswer() async {
     if (!_formKey.currentState!.validate()) return;
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('firstDogName', _dogNameController.text.trim());
     await prefs.setBool('onboardingDone', true);
+    if (!mounted) return;
     Navigator.of(context).pushReplacementNamed(AppRoutes.loginScreen);
   }
 

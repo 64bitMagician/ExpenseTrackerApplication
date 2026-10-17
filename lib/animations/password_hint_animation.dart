@@ -1,9 +1,7 @@
 // lib/animations/password_hint_animation.dart
 
-import 'package:expense_tracker/utils/password_file_management.dart';
 import 'package:flutter/material.dart';
 
-//Methods
 //Methods
 String hintResponse(String? outputText){
   if(outputText==null)
@@ -16,11 +14,10 @@ String hintResponse(String? outputText){
 
 class PasswordHintAnimation extends StatefulWidget {
   final Duration duration;
-  String? outputText;
+  final String? outputText;
 
-  PasswordHintAnimation(
-   this.outputText,
-      {
+  const PasswordHintAnimation(
+    this.outputText, {
     super.key,
     this.duration = const Duration(milliseconds: 600),
   });

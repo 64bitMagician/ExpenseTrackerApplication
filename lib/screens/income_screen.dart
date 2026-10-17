@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/csv_income_manager.dart';
-import '../utils/dialogs/dialogs_incomes.dart';
+import '../utils/dialogs/dialogs.dart';
 import '../custom_widgets/customizable_strings.dart';
-import '../utils/dialogs/dialogs_incomes.dart';
-import 'dashboardScreen.dart';
 
 class IncomeScreen extends StatefulWidget {
   const IncomeScreen({super.key});
@@ -24,15 +22,33 @@ class _IncomeScreenState extends State<IncomeScreen> {
 
   Future<void> _loadIncomes() async {
     final data = await CsvIncomeManager.readIncomes();
+    if (!mounted) return;
     setState(() {
       _incomes = data;
     });
   }
 
+  Future<void> _addIncome() async {
+    final entry = await showNameAmountDialog(
+      context,
+      title: 'Add Income',
+      nameLabel: 'Name',
+      amountLabel: 'Amount',
+    );
+    if (entry == null) return;
+
+    // The dashboard recalculates the balance from the stored incomes, so saving is enough
+    await CsvIncomeManager.addIncome({'name': entry.name, 'amount': entry.amount.toString()});
+    //Refreshes the screen with the new income
+    await _loadIncomes();
+  }
+
   Future<void> _deleteIncome(int index) async {
-    final confirmed = await showIncomeConfirmDialog(
+    final confirmed = await showConfirmDialog(
       context,
       "Are you sure you want to delete this income?",
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
     );
 
     if (!confirmed) return;
@@ -42,32 +58,6 @@ class _IncomeScreenState extends State<IncomeScreen> {
     });
 
     await CsvIncomeManager.writeIncomes(_incomes);
-  }
-
-  String extractMoneyFromString(String incomeString){
-    int i = incomeString.length-2;
-    String extractedMoney="";
-    while(incomeString[i]!=" ") // while inverse indexing is different from the ' ' character
-      i--;
-    i++; // stat indexing from number
-    //The index is now on the " " character before the number
-    while(incomeString[i]!="}") // traversing the money number
-        {
-      extractedMoney+=incomeString[i];
-      i++;
-    }
-
-    return extractedMoney;
-  }
-
-  void addToCurrentBalance(Map<String, String> theExpense){
-    String CSVline = theExpense.toString();
-    String money = extractMoneyFromString(CSVline);
-    // extracted money from CSV String
-    //turn money String into double
-    double formatedMoney = double.parse(money);
-    // Now extract from Current Balance in Dashboard
-    DashboardScreen.addToBalance(formatedMoney);
   }
 
   @override
@@ -93,10 +83,11 @@ class _IncomeScreenState extends State<IncomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
-                  CustomizableString.expenseStrings(context, amount, name),
-                  const Spacer(),
+                  // Expanded lets long names wrap instead of overflowing the row
+                  Expanded(child: CustomizableString.entryText(context, amount, name)),
                   IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
+                    tooltip: 'Delete',
                     onPressed: () => _deleteIncome(index),
                   ),
                 ],
@@ -106,18 +97,8 @@ class _IncomeScreenState extends State<IncomeScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final newIncome = await showAddIncomeDialog(context);
-          if (newIncome != null) {
-            await CsvIncomeManager.addIncome(newIncome);
-            //Refreshes the screen with the new income
-            _loadIncomes();
-            // Add income to Current Balance
-            //-------------------------------------
-            addToCurrentBalance(newIncome);
-            //--------------------------------------
-          }
-        },
+        onPressed: _addIncome,
+        tooltip: 'Add Income',
         child: const Icon(Icons.add),
       ),
     );

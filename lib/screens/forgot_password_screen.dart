@@ -1,3 +1,4 @@
+import 'package:expense_tracker/utils/custom_snackbar.dart';
 import 'package:expense_tracker/utils/password_file_management.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,75 +11,38 @@ class ForgotPasswordScreen extends StatefulWidget {
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
-    with SingleTickerProviderStateMixin {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final TextEditingController _answerController = TextEditingController();
-  late final String _correctAnswer;
+  String? _correctAnswer; // null until loaded, or if onboarding never saved one
 
   bool _showPasswordMessage = false;
-  late AnimationController _animationController;
-  late Animation<Offset> _slideAnimation;
-  late Animation<double> _fadeAnimation;
 
-  Future<void> fetchCorrectResponse() async {
+  Future<void> _fetchCorrectResponse() async {
     final prefs = await SharedPreferences.getInstance();
-    _correctAnswer = prefs.getString('firstDogName')!;
-  }
-
-  String? fetchPassword(){
-    String? password = PasswordFileManager.storedPassword;
-    return password;
+    _correctAnswer = prefs.getString('firstDogName');
   }
 
   @override
   void initState() {
     super.initState();
-    fetchPassword();
-    fetchCorrectResponse();
-
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
-    );
+    _fetchCorrectResponse();
   }
 
   void _checkAnswer() {
     final input = _answerController.text.trim().toLowerCase();
+    final isCorrect = _correctAnswer != null && input == _correctAnswer!.toLowerCase();
 
-    if (input == _correctAnswer.toLowerCase()) {
-      setState(() {
-        _showPasswordMessage = true;
-      });
-      _animationController.forward();
-    } else {
-      setState(() {
-        _showPasswordMessage = false;
-      });
-      _animationController.reset();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('❌ Incorrect answer. Try again.'),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
+    setState(() {
+      _showPasswordMessage = isCorrect;
+    });
+    if (!isCorrect) {
+      showReplacingSnackbar(context, '❌ Incorrect answer. Try again.', color: Colors.redAccent);
     }
   }
 
   @override
   void dispose() {
     _answerController.dispose();
-    _animationController.dispose();
     super.dispose();
   }
 
@@ -102,6 +66,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                 labelText: 'Your Answer',
                 border: OutlineInputBorder(),
               ),
+              onSubmitted: (_) => _checkAnswer(),
             ),
             const SizedBox(height: 16),
             ElevatedButton(
@@ -109,14 +74,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
               child: const Text("Submit"),
             ),
             const SizedBox(height: 32),
-            if (_showPasswordMessage)
-              SlideTransition(
-                position: _slideAnimation,
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: PasswordHintAnimation(fetchPassword()),
-                ),
-              ),
+            // PasswordHintAnimation slides and fades itself in
+            if (_showPasswordMessage) PasswordHintAnimation(PasswordFileManager.storedPassword),
           ],
         ),
       ),
