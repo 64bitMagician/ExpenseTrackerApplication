@@ -31,7 +31,7 @@ class HelpScreen extends StatelessWidget {
     },
     {
       'question': 'Can I export my data?',
-      'answer': 'No, there is no feature for exporting any data at the moment...',
+      'answer': 'Yes. Go to Settings > Expenses Data or Incomes Data and press the download icon in the top right corner. On the web version a CSV file is downloaded; on a phone the share sheet opens so you can save it to your files, cloud storage or send it by e-mail. The file opens in Excel, Google Sheets or any spreadsheet app.',
     },
   ];
 

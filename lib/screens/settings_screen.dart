@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../data_screens/expenses_csv_viewer_screen.dart';
-import '../data_screens/incomes_csv_viewer_screen.dart';
+import '../data_screens/records_table_screen.dart';
 import 'package:expense_tracker/app_routes.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -27,26 +26,26 @@ class SettingsScreen extends StatelessWidget {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.table_chart),
-            title: const Text('Show Expenses CSV Database'),
-            subtitle: const Text('View raw expenses stored in the app'),
+            title: const Text('Expenses Data'),
+            subtitle: const Text('View all expenses and export them as CSV'),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const CsvViewerScreen(),
+                  builder: (_) => RecordsTableScreen.expenses(),
                 ),
               );
             },
           ),
           ListTile(
             leading: const Icon(Icons.table_chart),
-            title: const Text('Show Incomes CSV Database'),
-            subtitle: const Text('View raw incomes stored in the app'),
+            title: const Text('Incomes Data'),
+            subtitle: const Text('View all incomes and export them as CSV'),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const CsvViewerIncomeScreen(),
+                  builder: (_) => RecordsTableScreen.incomes(),
                 ),
               );
             },
